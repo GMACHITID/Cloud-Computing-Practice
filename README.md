@@ -51,14 +51,28 @@ A simple webpage with animated elements, ready to deploy on Cloudflare Pages.
    wrangler pages deploy .
    ```
 
+## Setup - Configure Gemini API Key
+
+Before deploying, you need to configure your Google AI Studio API key:
+
+1. Open `config.js` file
+2. Replace `'YOUR_API_KEY_HERE'` with your actual Google AI Studio API key
+3. Get your API key from: [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+**Important:** 
+- The API key will be visible in the client-side code (this is normal for browser-based apps)
+- Consider setting up API key restrictions in Google Cloud Console for security
+- Never commit your real API key to public repositories
+
 ## Project Structure
 
 ```
 .
-├── index.html          # Main HTML file
-├── simple-webpage.html # Alternative HTML file
+├── index.html          # Main HTML file with chat bot
+├── config.js           # API configuration (add your API key here)
 ├── imgs/              # Images folder
 │   └── 89939503_2749424095293305_8900976475763638272_n.jpg
+├── .gitignore         # Git ignore file
 └── README.md          # This file
 ```
 
@@ -67,4 +81,8 @@ A simple webpage with animated elements, ready to deploy on Cloudflare Pages.
 - Background image from local folder
 - Centered H1 heading
 - Animated H2 that blinks in RGB colors and jumps around the page
+- **Customer Chat Bot** powered by Google Gemini API
+  - Floating chat widget
+  - Real-time AI responses
+  - Modern, responsive UI
 

@@ -17,3 +17,6 @@ npm-debug.log*
 # Node modules (if you add any later)
 node_modules/
 
+# API Keys (keep config.js local, don't commit with real keys)
+# config.js
+
