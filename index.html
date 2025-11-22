@@ -234,8 +234,11 @@
         </div>
     </div>
 
-    <!-- Load API configuration -->
-    <script src="config.js"></script>
+    <!-- API Configuration - Using Cloudflare Worker -->
+    <script>
+        // Use Cloudflare Worker endpoint (no API key needed in client)
+        const CHAT_API_URL = '/api/chat';
+    </script>
     
     <script>
         const h2 = document.getElementById('jumpingH2');
