@@ -282,12 +282,6 @@
             const message = chatbotInput.value.trim();
             if (!message) return;
 
-            // Check if API key is configured
-            if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
-                addMessage('bot', '⚠️ Please configure your Gemini API key in config.js file first!');
-                return;
-            }
-
             // Add user message to chat
             addMessage('user', message);
             chatbotInput.value = '';
@@ -295,19 +289,13 @@
             chatbotSend.innerHTML = '<div class="loading"></div>';
 
             try {
-                // Call Gemini API
-                const response = await fetch(GEMINI_API_URL, {
+                // Call Cloudflare Worker instead of Gemini API directly
+                const response = await fetch(CHAT_API_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: message
-                            }]
-                        }]
-                    })
+                    body: JSON.stringify({ message })
                 });
 
                 if (!response.ok) {
@@ -319,12 +307,14 @@
                 if (data.candidates && data.candidates[0] && data.candidates[0].content) {
                     const botResponse = data.candidates[0].content.parts[0].text;
                     addMessage('bot', botResponse);
+                } else if (data.error) {
+                    throw new Error(data.error);
                 } else {
                     throw new Error('Unexpected API response format');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                addMessage('bot', 'Sorry, I encountered an error. Please check your API key and try again.');
+                addMessage('bot', 'Sorry, I encountered an error. Please try again.');
             } finally {
                 chatbotSend.disabled = false;
                 chatbotSend.innerHTML = 'Send';
