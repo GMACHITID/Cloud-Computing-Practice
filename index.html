@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 3 Homework Submission</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url('imgs/89939503_2749424095293305_8900976475763638272_n.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            font-size: 2.5em;
+        }
+
+        h2 {
+            position: absolute;
+            font-size: 2em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            animation: rgbBlink 1s infinite;
+        }
+
+        @keyframes rgbBlink {
+            0% { color: rgb(255, 0, 0); }
+            33% { color: rgb(0, 255, 0); }
+            66% { color: rgb(0, 0, 255); }
+            100% { color: rgb(255, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Hey, this is my submission for the week 3 homework</h1>
+    <h2 id="jumpingH2">I found this picture in the depths of my folders</h2>
+
+    <script>
+        const h2 = document.getElementById('jumpingH2');
+        
+        function jumpAround() {
+            const maxX = window.innerWidth - h2.offsetWidth;
+            const maxY = window.innerHeight - h2.offsetHeight;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            h2.style.left = randomX + 'px';
+            h2.style.top = randomY + 'px';
+        }
+
+        // Initial position
+        jumpAround();
+        
+        // Jump every 1 second (1000 milliseconds)
+        setInterval(jumpAround, 1000);
+    </script>
+</body>
+</html>
+
