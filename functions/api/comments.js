@@ -68,7 +68,8 @@ export async function onRequestPost(context) {
 
         return jsonResponse({ success: true });
     } catch (err) {
-        return errorResponse('Failed to post comment', 500);
+        const msg = err?.message || 'Failed to post comment';
+        return jsonResponse({ error: msg }, 500);
     }
 }
 

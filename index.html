@@ -632,7 +632,13 @@
                     body: JSON.stringify({ content })
                 });
 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch () {
+                    commentCharCount.textContent = 'Server error (not JSON)';
+                    return;
+                }
                 if (response.ok) {
                     commentInput.value = '';
                     commentCharCount.textContent = '0 / 400 - Posted!';
@@ -641,9 +647,10 @@
                     }, 2000);
                 } else {
                     commentCharCount.textContent = data.error || 'Failed to post';
+                    commentCharCount.title = data.error || '';
                 }
             } catch (err) {
-                commentCharCount.textContent = 'Error. Try again.';
+                commentCharCount.textContent = 'Network error: ' + (err.message || 'Try again');
             } finally {
                 commentSubmit.disabled = false;
             }
