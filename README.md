@@ -64,16 +64,39 @@ Before deploying, you need to configure your Google AI Studio API key:
 - Consider setting up API key restrictions in Google Cloud Console for security
 - Never commit your real API key to public repositories
 
+## Setup - Cloudflare D1 (Comments)
+
+For the anonymous comment section, you need a D1 database:
+
+1. **Create D1 database:** Cloudflare Dashboard → Workers & Pages → D1 → Create database
+   - Name it (e.g. `comments-db`)
+
+2. **Run the migration** to create the comments table:
+   ```bash
+   wrangler d1 execute comments-db --remote --file=./migrations/0001_create_comments.sql
+   ```
+   (Replace `comments-db` with your database name.)
+
+3. **Bind D1 to Pages:** Pages → Your Project → Settings → Functions → D1 database bindings
+   - Variable name: `DB`
+   - D1 database: select your database
+
+4. Redeploy your Pages project.
+
 ## Project Structure
 
 ```
 .
 ├── index.html          # Main HTML file with chat bot
-├── config.js           # API configuration (add your API key here)
-├── imgs/              # Images folder
-│   └── 89939503_2749424095293305_8900976475763638272_n.jpg
-├── .gitignore         # Git ignore file
-└── README.md          # This file
+├── comments.html       # Comments display page
+├── config.example.js   # API config template
+├── imgs/               # Images folder
+├── functions/api/      # Cloudflare Pages Functions
+│   ├── chat.js         # Gemini chat API
+│   └── comments.js     # D1 comments API
+├── migrations/         # D1 schema
+│   └── 0001_create_comments.sql
+└── README.md
 ```
 
 ## Features
@@ -82,7 +105,7 @@ Before deploying, you need to configure your Google AI Studio API key:
 - Centered H1 heading
 - Animated H2 that blinks in RGB colors and jumps around the page
 - **Customer Chat Bot** powered by Google Gemini API
-  - Floating chat widget
-  - Real-time AI responses
-  - Modern, responsive UI
+- **Anonymous Comments** stored in Cloudflare D1
+  - Input in bottom-left corner (max 400 chars, text only)
+  - View all comments on `comments.html`
 
