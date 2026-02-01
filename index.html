@@ -200,11 +200,137 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* PDF Upload - centered in the middle of the screen */
+        .pdf-upload-center {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pdf-upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pdf-upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .pdf-upload-btn:active {
+            transform: scale(0.98);
+        }
+
+        .pdf-file-input {
+            display: none;
+        }
+
+        .pdf-upload-hint {
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            font-size: 0.85rem;
+        }
+
+        /* PDF Viewer overlay */
+        .pdf-viewer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .pdf-viewer-overlay.active {
+            display: flex;
+        }
+
+        .pdf-viewer-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .pdf-viewer-header {
+            background: #333;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-viewer-header h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .pdf-viewer-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0 8px;
+            line-height: 1;
+        }
+
+        .pdf-viewer-close:hover {
+            opacity: 0.8;
+        }
+
+        .pdf-viewer-frame {
+            width: 85vw;
+            height: 80vh;
+            min-height: 400px;
+            border: none;
+        }
     </style>
 </head>
 <body>
     <h1>Hey, this is my submission for the week 3 homework</h1>
     <h2 id="jumpingH2">I found this picture in the depths of my folders</h2>
+
+    <!-- PDF Upload - centered in the middle -->
+    <div class="pdf-upload-center">
+        <input type="file" id="pdfFileInput" class="pdf-file-input" accept="application/pdf" />
+        <button type="button" class="pdf-upload-btn" id="pdfUploadBtn">Upload PDF</button>
+        <span class="pdf-upload-hint">PDF only</span>
+    </div>
+
+    <!-- PDF Viewer overlay -->
+    <div class="pdf-viewer-overlay" id="pdfViewerOverlay">
+        <div class="pdf-viewer-container">
+            <div class="pdf-viewer-header">
+                <h3 id="pdfViewerTitle">PDF Document</h3>
+                <button type="button" class="pdf-viewer-close" id="pdfViewerClose">×</button>
+            </div>
+            <iframe id="pdfViewerFrame" class="pdf-viewer-frame" title="PDF viewer"></iframe>
+        </div>
+    </div>
 
     <!-- Chat Bot Toggle Button -->
     <button class="chatbot-toggle" id="chatbotToggle" title="Open Chat Bot">
@@ -341,6 +467,47 @@
         chatbotInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
+            }
+        });
+
+        // PDF Upload and Read
+        const pdfFileInput = document.getElementById('pdfFileInput');
+        const pdfUploadBtn = document.getElementById('pdfUploadBtn');
+        const pdfViewerOverlay = document.getElementById('pdfViewerOverlay');
+        const pdfViewerFrame = document.getElementById('pdfViewerFrame');
+        const pdfViewerTitle = document.getElementById('pdfViewerTitle');
+        const pdfViewerClose = document.getElementById('pdfViewerClose');
+
+        pdfUploadBtn.addEventListener('click', () => pdfFileInput.click());
+
+        pdfFileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+            if (!isPdf) {
+                alert('Please select a PDF file. Only PDF format is allowed.');
+                this.value = '';
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+            pdfViewerTitle.textContent = file.name;
+            pdfViewerFrame.src = url;
+            pdfViewerOverlay.classList.add('active');
+            this.value = '';
+        });
+
+        pdfViewerClose.addEventListener('click', () => {
+            const src = pdfViewerFrame.src;
+            pdfViewerFrame.src = '';
+            if (src && src.startsWith('blob:')) URL.revokeObjectURL(src);
+            pdfViewerOverlay.classList.remove('active');
+        });
+
+        pdfViewerOverlay.addEventListener('click', (e) => {
+            if (e.target === pdfViewerOverlay) {
+                pdfViewerClose.click();
             }
         });
     </script>
