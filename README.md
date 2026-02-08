@@ -66,22 +66,33 @@ Before deploying, you need to configure your Google AI Studio API key:
 
 ## Setup - Cloudflare D1 (Comments)
 
-For the anonymous comment section, you need a D1 database:
+For the anonymous comment section, you need a D1 database.
 
-1. **Create D1 database:** Cloudflare Dashboard → Workers & Pages → D1 → Create database
-   - Name it (e.g. `comments-db`)
+### Option A: Use wrangler.toml (recommended for Git deploy)
 
-2. **Run the migration** to create the comments table:
+1. **Create D1 database:** Cloudflare Dashboard → Workers & Pages → D1 → Create database  
+   - Name it (e.g. `comments-db`). Note the **Database ID** (UUID) from the database overview.
+
+2. **Edit `wrangler.toml`** in the project root: replace `YOUR_D1_DATABASE_ID` with your database UUID, and adjust `database_name` if you used a different name.
+
+3. **Run the migration** (creates the `comments` table):
    ```bash
    wrangler d1 execute comments-db --remote --file=./migrations/0001_create_comments.sql
    ```
-   (Replace `comments-db` with your database name.)
+   Use the same database name as in `wrangler.toml` (e.g. `comments-db`).
 
-3. **Bind D1 to Pages:** Pages → Your Project → Settings → Functions → D1 database bindings
-   - Variable name: `DB`
-   - D1 database: select your database
+4. **Commit and push** so the next Pages deployment uses the config. Ensure your Pages project uses the **V2 build** (Settings → Builds & deployments) so the Wrangler file is applied.
 
-4. Redeploy your Pages project.
+### Option B: Dashboard-only binding
+
+1. Create the D1 database and run the migration as in steps 1 and 3 above.
+
+2. **Bind D1 in the dashboard:** Pages → Your Project → Settings → Functions → D1 database bindings → Add binding  
+   - **Variable name:** `DB` (or `D1` / `DATABASE` — the code accepts any of these)  
+   - **D1 database:** select your database  
+   - Add for **Production** (and Preview if you use it).
+
+3. Redeploy the project.
 
 ## Project Structure
 
@@ -89,6 +100,7 @@ For the anonymous comment section, you need a D1 database:
 .
 ├── index.html          # Main HTML file with chat bot
 ├── comments.html       # Comments display page
+├── wrangler.toml       # Pages + D1 config (set database_id for comments)
 ├── config.example.js   # API config template
 ├── imgs/               # Images folder
 ├── functions/api/      # Cloudflare Pages Functions

@@ -17,12 +17,16 @@ function errorResponse(message, status = 400) {
     return jsonResponse({ error: message }, status);
 }
 
+function getDB(env) {
+    return env.DB || env.D1 || env.DATABASE || null;
+}
+
 export async function onRequestGet(context) {
     const { env } = context;
-    const DB = env.DB;
+    const DB = getDB(env);
 
     if (!DB) {
-        return jsonResponse({ error: 'Database not configured', comments: [] }, 500);
+        return jsonResponse({ error: 'Database not configured. Bind D1 with variable name DB (or D1/DATABASE).', comments: [] }, 500);
     }
 
     try {
@@ -44,10 +48,10 @@ export async function onRequestGet(context) {
 
 export async function onRequestPost(context) {
     const { request, env } = context;
-    const DB = env.DB;
+    const DB = getDB(env);
 
     if (!DB) {
-        return errorResponse('Database not configured', 500);
+        return errorResponse('Database not configured. Bind D1 with variable name DB (or D1/DATABASE).', 500);
     }
 
     try {
