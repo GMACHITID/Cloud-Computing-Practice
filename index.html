@@ -636,7 +636,7 @@
                 let data;
                 try {
                     data = await response.json();
-                } catch () {
+                } catch (_) {
                     commentCharCount.textContent = 'Server error (not JSON)';
                     return;
                 }
@@ -647,8 +647,12 @@
                         commentCharCount.textContent = '0 / 400';
                     }, 2000);
                 } else {
-                    commentCharCount.textContent = data.error || 'Failed to post';
-                    commentCharCount.title = data.error || '';
+                    const errMsg = data.error || 'Failed to post';
+                    commentCharCount.textContent = errMsg;
+                    commentCharCount.title = errMsg;
+                    if (data.error && data.error.includes('Database not configured')) {
+                        commentCharCount.textContent += ' → Add D1 binding in Pages Settings';
+                    }
                 }
             } catch (err) {
                 commentCharCount.textContent = 'Network error: ' + (err.message || 'Try again');
